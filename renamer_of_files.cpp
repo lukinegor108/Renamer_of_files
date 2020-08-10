@@ -4,6 +4,8 @@
 
 int main()
 {
+	std::string path_to_albums = "/home/egor/Music/2pac/";
+
 	//Contains the names of albums of 2pac
 	std::string albums[8] = {
 				 "2Pacalypse Now",
@@ -23,7 +25,7 @@ int main()
 	for(auto album : albums)
 	{
 		//"path" - full path to album dir, we are iterating over albums in "albums[]"
-		auto path = "/home/egor/Music/2pac/" + album;
+		auto path = path_to_albums + album;
 		
 		//Iterating over all files in "album"
 		for(const auto &entry : std::filesystem::directory_iterator(path))
