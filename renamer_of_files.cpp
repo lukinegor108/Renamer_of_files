@@ -1,39 +1,34 @@
 #include <string>
 #include <iostream>
 #include <filesystem>
+#include <vector>
 
 int main()
 {
-	std::string path_to_albums = "/home/egor/Music/2pac/";
+	// Path to dir with your albums with the songs.
+	auto path_to_albums = "/home/egor/Music/2pac/";
 
-	//Contains the names of albums of 2pac
-	std::string albums[8] = {
-				 "2Pacalypse Now",
-	       			 "All Eyez on Me",
-				 "Better Dayz",
-				 "Greatest Hits",
-				 "Pac's Life",
-				 "Me Against the World",
-				 "R U Still Down? (Remember Me)",
-				 "Loyal To The Game"
-				};
-	//All names of songs in all albums are looking like this: "2pac - *.mp3"
-	//I want to delete first seven characters from all songs
-	//This is the number(7)
+	// Number of chars, which will be erased from the start of songs names.
+	// (ex: "2pac - Changes.mp3" -> "Changes.mp3"), 7 chars were erased.
 	auto number_of_chars = 7;
+
+	std::vector<std::string> albums;
+
+	for(auto album : std::filesystem::directory_iterator(path_to_albums))
+	{
+		auto path_to_album = static_cast<std::string>(album.path());
+		albums.push_back(path_to_album);
+	}	
 
 	for(auto album : albums)
 	{
-		//"path" - full path to album dir, we are iterating over albums in "albums[]"
-		auto path = path_to_albums + album;
-		
-		//Iterating over all files in "album"
-		for(const auto &entry : std::filesystem::directory_iterator(path))
+		for(const auto &song : std::filesystem::directory_iterator(album))
 		{
-			auto old_name = static_cast<std::string>(entry.path());
-			auto new_name = (static_cast<std::string>(entry.path())).erase(old_name.find_last_of("/") + 1, number_of_chars);
+			auto path_to_song =  static_cast<std::string>(song.path());
+			auto old_path = path_to_song;
+			auto new_path = old_path.erase(old_path.find_last_of("/") + 1, number_of_chars);
 
-			std::filesystem::rename(old_name, new_name);
+			std::filesystem::rename(path_to_song, new_path);
 		}
 	}
 
